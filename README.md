@@ -1,5 +1,7 @@
 # Q-Learning Sandbox
 
+Check out the deployed version here: https://qlearningsandbox.streamlit.app/
+
 This repository contains an interactive gridworld environment to visualize and experiment with tabular Q-learning, implemented with Streamlit, NumPy, and Plotly.
 
 The app allows you to:
