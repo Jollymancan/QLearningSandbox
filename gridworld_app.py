@@ -119,22 +119,34 @@ def epsilon_greedy_action(state, Q, epsilon):
 def greedy_action(state, Q):
     return epsilon_greedy_action(state, Q, 0.0)
 
-
 def compute_value_grid(grid, Q):
     """
-    Compute value grid V(r,c) = max_a Q((r,c,mask0), a) where mask0=0
-    (no rewards collected yet).
+    Compute V(r, c) = max_{mask, a} Q((r, c, mask), a)
+
+    This shows, for each cell, the best value the agent has learned for any mask state
     """
     value_grid = np.full((ROWS, COLS), np.nan)
-    mask0 = 0
+
     for r in range(ROWS):
         for c in range(COLS):
-            cell = grid[r, c]
-            if cell == WALL:
+            if grid[r, c] == WALL:
                 continue
-            qs = [Q.get((r, c, mask0, a), 0.0) for a in range(N_ACTIONS)]
-            value_grid[r, c] = max(qs) if len(qs) > 0 else 0.0
+
+            # Collect all Q-values for this (r, c), any mask, any action
+            qs = [
+                q
+                for (rr, cc, m, a), q in Q.items()
+                if rr == r and cc == c
+            ]
+
+            if qs:
+                value_grid[r, c] = max(qs)
+            else:
+                value_grid[r, c] = 0.0 
+
     return value_grid
+
+
 
 
 def make_value_heatmap_figure(grid, Q, title=None):
